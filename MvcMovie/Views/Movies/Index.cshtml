@@ -1,4 +1,6 @@
-﻿@model List<MvcMovie.Models.Movie>
+﻿@using MvcMovie.Models 
+
+@model List<Movie>
 
 @{
     ViewBag.Title = "Index";
@@ -8,6 +10,15 @@
 
 <p>
     @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+
+    @using (Html.BeginForm())
+    {
+    <p>
+        Genre: @Html.DropDownList("movieGenre", "All")
+        Title: @Html.TextBox("searchString")<br />
+        <input type="submit" value="Filter" />
+    </p>
+    }
 </p>
 <table class="table">
     <tr>

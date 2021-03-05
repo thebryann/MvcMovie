@@ -13,6 +13,8 @@ namespace MvcMovie.Models
 
         [Required(ErrorMessage = "Campo obrigatório")]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Release Date")]
         public DateTime ReleaseDate { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório")]
@@ -24,6 +26,6 @@ namespace MvcMovie.Models
 
     public class MovieDbContext : DbContext
     {
-        public DbSet<Movie> movie { get; set; }
+        public DbSet<Movie> Movies { get; set; }
     }
 }

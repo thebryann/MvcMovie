@@ -14,20 +14,40 @@ namespace MvcMovie.Controllers
     {
         private MovieDbContext db = new MovieDbContext();
 
-        // GET: Movies
-        public ActionResult Index()
+        public ActionResult Index(string movieGenre, string searchString)
         {
-            return View(db.movie.ToList());
+            var GenreLst = new List<string>();
+
+            var GenreQry = from d in db.Movies
+                           orderby d.Genre
+                           select d.Genre;
+
+            GenreLst.AddRange(GenreQry.Distinct());
+            ViewBag.movieGenre = new SelectList(GenreLst, "Ação");
+
+            var movies = from m in db.Movies
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(x => x.Genre == movieGenre);
+            }
+
+            return View(movies.ToList());
         }
 
-        // GET: Movies/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movie = db.movie.Find(id);
+            Movie movie = db.Movies.Find(id);
             if (movie == null)
             {
                 return HttpNotFound();
@@ -35,22 +55,19 @@ namespace MvcMovie.Controllers
             return View(movie);
         }
 
-        // GET: Movies/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Movies/Create
         // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,Title,ReleaseDate,Genre,Price")] Movie movie)
         {
             if (ModelState.IsValid)
             {
-                db.movie.Add(movie);
+                db.Movies.Add(movie);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -58,24 +75,20 @@ namespace MvcMovie.Controllers
             return View(movie);
         }
 
-        // GET: Movies/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movie = db.movie.Find(id);
+            Movie movie = db.Movies.Find(id);
             if (movie == null)
             {
-                return HttpNotFound();
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             }
             return View(movie);
         }
 
-        // POST: Movies/Edit/5
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,Title,ReleaseDate,Genre,Price")] Movie movie)
@@ -89,14 +102,13 @@ namespace MvcMovie.Controllers
             return View(movie);
         }
 
-        // GET: Movies/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movie = db.movie.Find(id);
+            Movie movie = db.Movies.Find(id);
             if (movie == null)
             {
                 return HttpNotFound();
@@ -104,13 +116,12 @@ namespace MvcMovie.Controllers
             return View(movie);
         }
 
-        // POST: Movies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Movie movie = db.movie.Find(id);
-            db.movie.Remove(movie);
+            Movie movie = db.Movies.Find(id);
+            db.Movies.Remove(movie);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
