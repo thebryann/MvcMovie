@@ -15,7 +15,7 @@
     {
     <p>
         Genre: @Html.DropDownList("movieGenre", "All")
-        Title: @Html.TextBox("searchString")<br />
+        Title: @Html.TextBox("searchString")
         <input type="submit" value="Filter" />
     </p>
     }
@@ -34,6 +34,9 @@
         <th>
             @Html.DisplayNameFor(model => model[0].Price)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Rating)
+        </th>
         <th></th>
     </tr>
 
@@ -50,6 +53,9 @@
         </td>
         <td>
             @item.Price
+        </td>
+        <td>
+            @item.Rating
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
